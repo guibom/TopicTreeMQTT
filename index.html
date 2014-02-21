@@ -4,10 +4,10 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <link type="text/css" rel="stylesheet" href="style.css"/>
-    <script type="text/javascript" src="d3/d3.js"></script>
-    <script type="text/javascript" src="d3/d3.layout.js"></script>
-    <script type="text/javascript" src="mqttws31.js"></script>
-    <script type="text/javascript" src="topic-tree.js"></script>
+    <script type="text/javascript" src="js/d3.js"></script>
+    <script type="text/javascript" src="js/d3.layout.js"></script>    
+    <script type="text/javascript" src="js/topic-tree.js"></script>
+    <script type="text/javascript" src="js/socket.io.min.js"></script>
     <style type="text/css">
 
 
@@ -50,26 +50,46 @@ path.link {
 
 setup("body");
 
-var client = new Messaging.Client(document.location.hostname,1883,"web" + new Date().getTime());
-client.onMessageArrived = onMessage;
-client.onconnectionlost = onDisconnect;
-function onConnect(){
-	client.subscribe('#',onMessage);
-	console.log("mqtt connected");
-}
+var socket = io.connect("192.168.0.175:3000");
 
-console.log("bar");
-client.connect({onSuccess:onConnect});
+socket.on('connect', function () {
+socket.on('mqtt', function (msg) {
 
-function onMessage(message) {
-	//console.log(message.topic + "- " + message.payload);
-	addNode(message.destinationName, message.payloadString);
-}
+    console.log(msg.topic + ', ' + msg.payload);
 
-function onDisconnect(reason) {
-	console.log("disconnected - " + reason);
-	alert("disconnected - " + reason);
-}
+    addNode(msg.topic, msg.payload);
+  
+});
+
+//Topic subscriptions
+socket.emit('subscribe', 
+    {topic: 'home/#'}, 
+    {topic: 'weather/#'}
+    );
+});
+
+// setup("body");
+
+// var client = new Messaging.Client(document.location.hostname,1883,"web" + new Date().getTime());
+// client.onMessageArrived = onMessage;
+// client.onconnectionlost = onDisconnect;
+// function onConnect(){
+// 	client.subscribe('#',onMessage);
+// 	console.log("mqtt connected");
+// }
+
+// console.log("bar");
+// client.connect({onSuccess:onConnect});
+
+// function onMessage(message) {
+// 	//console.log(message.topic + "- " + message.payload);
+// 	addNode(message.destinationName, message.payloadString);
+// }
+
+// function onDisconnect(reason) {
+// 	console.log("disconnected - " + reason);
+// 	alert("disconnected - " + reason);
+// }
     </script>
   </body>
 </html>
