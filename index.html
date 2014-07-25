@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -37,8 +36,7 @@
     </style>
   </head>
   <body>
-    <div id="body" style="width:1280px; height:800px; border=1px;">
-      
+    <div id="body" style="width:1280px; height:800px; border=1px;">     
     </div>
     <script type="text/javascript">
 
@@ -54,7 +52,7 @@ socket.on('connect', function () {
 socket.on('mqtt', function (msg) {
 
     addNode(msg.topic, msg.payload);
-  
+
 });
 
 //Topic subscriptions
